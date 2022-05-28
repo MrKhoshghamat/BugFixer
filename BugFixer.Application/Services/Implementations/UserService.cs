@@ -89,5 +89,25 @@ namespace BugFixer.Application.Services.Implementations
         }
 
         #endregion
+
+        #region EmailActivation
+
+        public async Task<bool> ActivateUserEmail(string activationCode)
+        {
+            var user = await _userRepository.GetUserByActivationCodeAsync(activationCode);
+
+            if (user == null) return false;
+            if (user.IsBanned || user.IsDeleted) return false;
+
+            user.IsEmailConfirmed = true;
+            user.EmailActivationCode = CodeGenerator.CreateActivationCode();
+
+            await _userRepository.UpdateUserAsync(user);
+            await _userRepository.SaveAsync();
+
+            return true;
+        }
+
+        #endregion
     }
 }

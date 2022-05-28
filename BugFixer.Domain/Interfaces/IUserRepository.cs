@@ -6,7 +6,9 @@ namespace BugFixer.Domain.Interfaces
     {
         Task<bool> IsExistUserByEmailAsync(string email);
         Task CreateUserAsync(User user);
+        Task UpdateUserAsync(User user);
         Task<User> GetUserByEmailAsync(string email);
+        Task<User> GetUserByActivationCodeAsync(string activationCode);
         Task SaveAsync();
     }
 }

@@ -145,5 +145,26 @@ namespace BugFixer.Web.Controllers
         }
 
         #endregion
+
+        #region Email Activation
+
+        [HttpGet("activate-email/{activationCode}")]
+        [RedirectHomeIfLoggedInActionFilter]
+        public async Task<IActionResult> ActivationUserEmail(string activationCode)
+        {
+            var result = await _userService.ActivateUserEmail(activationCode);
+            if (result)
+            {
+                TempData[SuccessMessage] = "حساب کاربری شما با موفقیت فعال شد";
+            }
+            else
+            {
+                TempData[ErrorMessage] = "فعالسازی حساب کاربری با خطا مواجه شد";
+            }
+
+            return RedirectToAction("Login", "Account");
+        }
+
+        #endregion
     }
 }
