@@ -1,4 +1,5 @@
-﻿using BugFixer.Application.Generators;
+﻿using System.Runtime.Serialization.Formatters;
+using BugFixer.Application.Generators;
 using BugFixer.Application.Security;
 using BugFixer.Application.Services.Interfaces;
 using BugFixer.Application.Statics;
@@ -14,10 +15,11 @@ namespace BugFixer.Application.Services.Implementations
         #region Ctor
 
         private readonly IUserRepository _userRepository;
-
-        public UserService(IUserRepository userRepository)
+        private readonly IEmailService _emailService;
+        public UserService(IUserRepository userRepository, IEmailService emailService)
         {
             _userRepository = userRepository;
+            _emailService = emailService;
         }
 
         #endregion
@@ -47,7 +49,12 @@ namespace BugFixer.Application.Services.Implementations
             // Send Activation Email
             #region Send Activation Email
 
-            // TODO Send Email Activation Code
+            var body = $@"
+                <div> برای فعالسازی حساب کاربری خود روی لینک زیر کلیک کنید </div>
+                <a href='{PathTools.SiteAddress}/Activate-Email/{user.EmailActivationCode}'>فعالسازی حساب کاربری</a>
+                ";
+
+            await _emailService.SendEmail(user.Email, "فعالسازی حساب کاربری", body);
 
             #endregion
 
@@ -106,6 +113,32 @@ namespace BugFixer.Application.Services.Implementations
             await _userRepository.SaveAsync();
 
             return true;
+        }
+
+        #endregion
+
+        #region Forgot Password
+
+        public async Task<ForgotPasswordResult> ForgotPasswordAsync(ForgotPasswordViewModel forgotPassword)
+        {
+            var email = forgotPassword.Email.SanitizeText().Trim().ToLower();
+            var user = await _userRepository.GetUserByEmailAsync(forgotPassword.Email);
+
+            if (user == null || user.IsDeleted) return ForgotPasswordResult.UserNotFound;
+            if (user.IsBanned) return ForgotPasswordResult.UserBanned;
+            
+            #region Send Activation Email
+
+            var body = $@"
+                <div> برای فراموشی کلمه عبور بر روی لینک زیر کلیک کنید </div>
+                <a href='{PathTools.SiteAddress}/Reset-Password/{user.EmailActivationCode}'>فراموشی کلمه عبور</a>
+                ";
+
+            await _emailService.SendEmail(user.Email, "فعالسازی حساب کاربری", body);
+
+            #endregion
+
+            return ForgotPasswordResult.Success;
         }
 
         #endregion

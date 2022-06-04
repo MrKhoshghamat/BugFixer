@@ -7,5 +7,11 @@
         public static readonly string DefaultUserAvatar = "DefaultAvatar.png";
 
         #endregion
+
+        #region Site
+
+        public static readonly string SiteAddress = "https://localhost:7097";
+
+        #endregion
     }
 }

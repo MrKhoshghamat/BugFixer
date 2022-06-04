@@ -166,5 +166,46 @@ namespace BugFixer.Web.Controllers
         }
 
         #endregion
+
+        #region Forgot Password
+
+        [HttpGet("forgot-password")]
+        public async Task<IActionResult> ForgotPassword()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel forgotPassword)
+        {
+            if (!await _captchaValidator.IsCaptchaPassedAsync(forgotPassword.Captcha))
+            {
+                TempData[ErrorMessage] = "اعتبارسنجی Captcha با مشکل مواجه شد. لطفا مجددا تلاش کنید.";
+                return View(forgotPassword);
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(forgotPassword);
+            }
+
+            var result = await _userService.ForgotPasswordAsync(forgotPassword);
+
+            switch (result)
+            {
+                case ForgotPasswordResult.UserBanned:
+                    TempData[WarningMessage] = "دسترسی شما به حساب کاربری مسدود می باشد.";
+                    break;
+                case ForgotPasswordResult.UserNotFound:
+                    TempData[ErrorMessage] = "کاربری با این مشخصات یافت نشد";
+                    break;
+                case ForgotPasswordResult.Success:
+                    TempData[InfoMessage] = "لینک بازیابی رمز عبور به ایمیل شما ارسال شد.";
+                    return RedirectToAction("Login", "Account");
+            }
+
+            return View(forgotPassword);
+        }
+
+        #endregion
     }
 }
