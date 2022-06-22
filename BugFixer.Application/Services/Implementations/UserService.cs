@@ -1,12 +1,10 @@
-﻿using System.Runtime.Serialization.Formatters;
-using BugFixer.Application.Generators;
+﻿using BugFixer.Application.Generators;
 using BugFixer.Application.Security;
 using BugFixer.Application.Services.Interfaces;
 using BugFixer.Application.Statics;
 using BugFixer.Domain.Entities.Account;
 using BugFixer.Domain.Interfaces;
 using BugFixer.Domain.ViewModels.Account;
-using Ganss.XSS;
 
 namespace BugFixer.Application.Services.Implementations
 {
@@ -126,7 +124,7 @@ namespace BugFixer.Application.Services.Implementations
 
             if (user == null || user.IsDeleted) return ForgotPasswordResult.UserNotFound;
             if (user.IsBanned) return ForgotPasswordResult.UserBanned;
-            
+
             #region Send Activation Email
 
             var body = $@"
@@ -139,6 +137,34 @@ namespace BugFixer.Application.Services.Implementations
             #endregion
 
             return ForgotPasswordResult.Success;
+        }
+
+        #endregion
+
+        #region Reset PassWord
+
+        public async Task<ResetPasswordResult> ResetPasswordAsync(ResetPasswordViewModel resetPassword)
+        {
+            var user = await _userRepository.GetUserByActivationCodeAsync(
+                resetPassword.EmailActivationCode.SanitizeText());
+
+            if (user == null || user.IsDeleted) return ResetPasswordResult.UserNotFound;
+            if (user.IsBanned) return ResetPasswordResult.UserIsBanned;
+
+            var password = PasswordHelper.EncodePasswordMd5(resetPassword.Password.SanitizeText());
+            user.Password = password;
+            user.IsEmailConfirmed = true;
+            user.EmailActivationCode = CodeGenerator.CreateActivationCode();
+
+            await _userRepository.UpdateUserAsync(user);
+            await _userRepository.SaveAsync();
+
+            return ResetPasswordResult.Success;
+        }
+
+        public async Task<User> GetUserByActivationCode(string activationCode)
+        {
+            return await _userRepository.GetUserByActivationCodeAsync(activationCode.SanitizeText());
         }
 
         #endregion

@@ -29,5 +29,12 @@ namespace BugFixer.Application.Services.Interfaces
         Task<ForgotPasswordResult> ForgotPasswordAsync(ForgotPasswordViewModel forgotPassword);
 
         #endregion
+
+        #region ResetPassword
+
+        Task<ResetPasswordResult> ResetPasswordAsync(ResetPasswordViewModel resetPassword);
+        Task<User> GetUserByActivationCode(string activationCode);
+
+        #endregion
     }
 }

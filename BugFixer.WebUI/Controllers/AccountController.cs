@@ -175,6 +175,8 @@ namespace BugFixer.Web.Controllers
             return View();
         }
 
+        [HttpPost("forgot-password"), ValidateAntiForgeryToken]
+        [RedirectHomeIfLoggedInActionFilter]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel forgotPassword)
         {
             if (!await _captchaValidator.IsCaptchaPassedAsync(forgotPassword.Captcha))
@@ -204,6 +206,55 @@ namespace BugFixer.Web.Controllers
             }
 
             return View(forgotPassword);
+        }
+
+        #endregion
+
+        #region Reset Password
+
+        [HttpGet("reset-password/{emailActivationCode}")]
+        public async Task<IActionResult> ResetPassword(string emailActivationCode)
+        {
+            var user = await _userService.GetUserByActivationCode(emailActivationCode);
+            if (user == null || user.IsBanned || user.IsDeleted) return NotFound();
+
+            return View(new ResetPasswordViewModel()
+            {
+                EmailActivationCode = user.EmailActivationCode
+            });
+        }
+
+        [HttpPost("reset-password/{emailActivationCode}"), ValidateAntiForgeryToken]
+        [RedirectHomeIfLoggedInActionFilter]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel resetPassword)
+        {
+            if (!await _captchaValidator.IsCaptchaPassedAsync(resetPassword.Captcha))
+            {
+                TempData[ErrorMessage] = "اعتبارسنجی Captcha با مشکل مواجه شد. لطفا مجددا تلاش کنید.";
+                return View(resetPassword);
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(resetPassword);
+            }
+
+            var result = await _userService.ResetPasswordAsync(resetPassword);
+
+            switch (result)
+            {
+                case ResetPasswordResult.Success:
+                    TempData[SuccessMessage] = "عملیات با موفقیت انجام شد";
+                    return RedirectToAction("Login", "Account");
+                case ResetPasswordResult.UserNotFound:
+                    TempData[ErrorMessage] = "کاربر مورد نظر یافت نشد";
+                    break;
+                case ResetPasswordResult.UserIsBanned:
+                    TempData[WarningMessage] = "دسترسی شما محدود میباشد";
+                    break;
+            }
+
+            return View(resetPassword);
         }
 
         #endregion
