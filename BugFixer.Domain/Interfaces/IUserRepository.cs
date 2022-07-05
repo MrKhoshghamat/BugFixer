@@ -9,6 +9,7 @@ namespace BugFixer.Domain.Interfaces
         Task UpdateUserAsync(User user);
         Task<User> GetUserByEmailAsync(string email);
         Task<User> GetUserByActivationCodeAsync(string activationCode);
+        Task<User?> GetUserByIdAsync(long userId);
         Task SaveAsync();
     }
 }

@@ -37,7 +37,7 @@
     <div class="account-layer">
         <div class="container">
             <!-- right side -->
-            <partial name="_UserPanelRightSideBar" />
+            @await Component.InvokeAsync("UserPanelRightSideBar")
             <!-- /right side -->
             <!-- left side -->
             <div class="left-side">

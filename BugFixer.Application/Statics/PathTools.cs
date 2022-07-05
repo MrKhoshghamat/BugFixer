@@ -5,6 +5,8 @@
         #region User
 
         public static readonly string DefaultUserAvatar = "DefaultAvatar.png";
+        public static readonly string UserAvatarServerPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Content/User/");
+        public static readonly string UserAvatarPath = "/Content/User/";
 
         #endregion
 

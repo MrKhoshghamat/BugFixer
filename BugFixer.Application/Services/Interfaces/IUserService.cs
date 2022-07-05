@@ -36,5 +36,11 @@ namespace BugFixer.Application.Services.Interfaces
         Task<User> GetUserByActivationCode(string activationCode);
 
         #endregion
+
+        #region User Panel
+
+        Task<User?> GetUserByIdAsync(long userId);
+
+        #endregion
     }
 }

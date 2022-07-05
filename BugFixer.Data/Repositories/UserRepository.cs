@@ -43,6 +43,11 @@ namespace BugFixer.Data.Repositories
             return await _context.Users.FirstOrDefaultAsync(s => s.EmailActivationCode == activationCode);
         }
 
+        public async Task<User?> GetUserByIdAsync(long userId)
+        {
+            return await _context.Users.FirstOrDefaultAsync(s => !s.IsDeleted && s.Id == userId);
+        }
+
         public async Task SaveAsync()
         {
             await _context.SaveChangesAsync();

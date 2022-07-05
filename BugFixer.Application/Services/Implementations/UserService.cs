@@ -141,7 +141,7 @@ namespace BugFixer.Application.Services.Implementations
 
         #endregion
 
-        #region Reset PassWord
+        #region Reset Password
 
         public async Task<ResetPasswordResult> ResetPasswordAsync(ResetPasswordViewModel resetPassword)
         {
@@ -165,6 +165,15 @@ namespace BugFixer.Application.Services.Implementations
         public async Task<User> GetUserByActivationCode(string activationCode)
         {
             return await _userRepository.GetUserByActivationCodeAsync(activationCode.SanitizeText());
+        }
+
+        #endregion
+
+        #region User Panel
+
+        public async Task<User?> GetUserByIdAsync(long userId)
+        {
+            return await _userRepository.GetUserByIdAsync(userId);
         }
 
         #endregion
