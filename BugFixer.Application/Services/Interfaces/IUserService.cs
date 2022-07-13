@@ -40,6 +40,7 @@ namespace BugFixer.Application.Services.Interfaces
         #region User Panel
 
         Task<User?> GetUserByIdAsync(long userId);
+        Task ChangeUserAvatar(long userId, string fileName);
 
         #endregion
     }

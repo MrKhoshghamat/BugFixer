@@ -34,7 +34,7 @@ namespace BugFixer.Web.Controllers
             {
                 result.ReturnUrl = ReturnUrl;
             }
-            return View();
+            return View(result);
         }
 
         [HttpPost("login"), ValidateAntiForgeryToken]
