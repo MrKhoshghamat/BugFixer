@@ -21,8 +21,10 @@ function UploadUserAvatar(url) {
             contentType: false,
             processData: false,
             beforeSend: function () {
+                StartLoading('#UserInfoBox');
             },
             success: function (response) {
+                EndLoading('#UserInfoBox');
                 if (response.status === "Success") {
                     location.reload();
                 } else {
@@ -46,4 +48,17 @@ function UploadUserAvatar(url) {
         });
     }
 
+}
+
+function StartLoading(selector = 'body') {
+    $(selector).waitMe({
+        effect: 'bounce',
+        text: 'لطفا منتظر بمانید',
+        bg: 'rgba(255, 255, 255, 0.7)',
+        color: '#000'
+    });
+}
+
+function EndLoading(selector = 'body') {
+    $(selector).waitMe('hide');
 }
