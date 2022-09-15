@@ -1,7 +1,24 @@
+#region Services
+
+using BugFixer.Persistence.Context;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+#region Context
+
+builder.Services.AddDbContext<BugFixerDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("BugFixerConnection"))
+);
+
+#endregion
+
+#endregion
+
+#region Middlewares
 
 var app = builder.Build();
 
@@ -25,3 +42,5 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+#endregion
