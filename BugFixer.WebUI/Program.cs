@@ -1,5 +1,8 @@
 #region Services
 
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
+using BugFixer.Persistence;
 using BugFixer.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +16,19 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<BugFixerDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("BugFixerConnection"))
 );
+
+#endregion
+
+#region Encode
+
+builder.Services.AddSingleton<HtmlEncoder>(
+    HtmlEncoder.Create(allowedRanges: new[] { UnicodeRanges.All }));
+
+#endregion
+
+#region Dependency Registeration
+
+DependencyContainer.RegisterDependncies(builder.Services);
 
 #endregion
 

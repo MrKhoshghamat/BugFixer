@@ -1,4 +1,6 @@
-﻿@{
+﻿@model BugFixer.Domain.ViewModels.Account.RegisterViewModel
+
+@{
     ViewBag.Title = "ثبت نام";
     Layout = "_Layout";
 }
@@ -62,7 +64,7 @@
 
                 <div class="col-md-5 col-sm-12 col-xs-12 pull-right">
 
-                    <form action="" method="" class="shadow-style">
+                    <form asp-action="Register" asp-controller="Account" class="shadow-style">
 
                         <div class="inner">
 
@@ -70,20 +72,23 @@
 
                             <div class="input-layer">
                                 <span><i class="icon-mail-envelope"></i> پست الکترونیک </span>
-                                <input type="email" name="">
+                                <input type="email" asp-for="Email">
                             </div>
+                            <span asp-validation-for="Email" class="error-style"></span>
 
-                            <div class="input-layer">
+                            <div class="input-layer mt-50">
                                 <span><i class="icon-lock"></i> رمز عبور </span>
-                                <input type="password" name="">
+                                <input type="password" asp-for="Password">
                             </div>
+                            <span asp-validation-for="Password" class="error-style"></span>
 
-                            <div class="input-layer">
+                            <div class="input-layer mt-50">
                                 <span><i class="icon-lock"></i> تکرار رمز عبور </span>
-                                <input type="password" name="">
+                                <input type="password" asp-for="RePassword">
                             </div>
+                            <span asp-validation-for="RePassword" class="error-style"></span>
 
-                            <button> ثبت نام در سایت </button>
+                            <button type="submit"> ثبت نام در سایت </button>
 
                         </div>
 
@@ -99,3 +104,8 @@
     </div>
 
 </div>
+
+@section Scripts
+{
+    <partial name="_JqueryValidation"/>
+}
